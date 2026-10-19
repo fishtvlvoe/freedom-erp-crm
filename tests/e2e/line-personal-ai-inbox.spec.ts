@@ -23,6 +23,7 @@ test('首頁同時顯示待處理收件匣與四象限摘要，且可確認低�
   await expect(page.getByTestId('important-urgent-count')).toHaveText(/\d+/);
   await expect(page.getByTestId('review-count')).toHaveText(/\d+/);
   await page.getByRole('button', {name: '待處理收件匣'}).click();
+  await expect(page.getByRole('heading', {name: '待處理收件匣'})).toBeVisible();
   await page.getByRole('button', {name: '確認分類'}).first().click();
   await expect(page.getByText('已確認分類')).toBeVisible();
   await expect(page.locator('body')).not.toContainText('0912-345-678');
@@ -36,6 +37,8 @@ test('家人只能看到摘要與已核准待辦，OpenChat 草稿在驗證前�
   await page.getByLabel('密碼').fill('family-demo-password');
   await page.getByRole('button', {name: '登入'}).click();
   await expect(page.getByRole('banner').getByText('家人檢視')).toBeVisible();
+  await expect(page.getByRole('button', {name: '連接與備份', exact: true})).toHaveCount(0);
+  await expect(page.getByRole('button', {name: '查看連接與備份', exact: true})).toHaveCount(0);
   await expect(page.getByText(/原始訊息.*回覆草稿.*分類操作.*已隱藏/)).toBeVisible();
   await expect(page.locator('.draft-preview')).toHaveCount(0);
   await page.getByRole('button', {name: '已核准待辦'}).click();
