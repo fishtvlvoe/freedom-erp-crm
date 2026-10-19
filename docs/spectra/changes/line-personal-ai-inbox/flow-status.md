@@ -46,7 +46,7 @@ updated: 2026-10-20
 
 ## ⑨ PR 與 retro
 
-- [ ] Fish 驗收已完成；PR 與白話版 retro HTML 尚未動工。
+- [x] PR 已建立：[mars-tw/freedom-erp-crm#2](https://github.com/mars-tw/freedom-erp-crm/pull/2)；retro 結論記錄於 `docs/spectra/changes/line-personal-ai-inbox/retro.md`，白話版已產出至 `/Users/fishtv/Downloads/line-personal-ai-inbox-retro-2026-10-20.html` 並以 ego-browser 開啟。沒有回寫全域規則。
 
 ## ⑩ Archive
 
