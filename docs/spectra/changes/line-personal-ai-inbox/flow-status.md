@@ -24,24 +24,25 @@ updated: 2026-10-20
 
 ## ④ 實作
 
-- [x] 在本工作樹完成 fake LINE domain／Worker API、Fish／家人登入與 RBAC、遮罩／稽核／備份邊界及 Dashboard；沒有接入真實 provider。
+- [x] 在本工作樹完成 fake LINE domain／Worker API、Fish／家人／分會管理員測試身份與 RBAC、遮罩／稽核／備份佇列／隔離還原及 Dashboard；沒有接入真實 provider。
 
 ## ⑤ 本功能測試
 
-- [x] focused unit/API 7/7 與 Playwright 5/5 通過；測試檔與前後端 Gherkin 已納入 change。
+- [x] focused LINE unit/API 18/18 與 Playwright 9/9 通過；全套 Playwright 103/103 通過；測試檔與前後端 Gherkin 已納入 change。
 
 ## ⑥ 舊功能回歸
 
-- [x] 本地全套 tests 191（190 pass、1 skip、0 fail）、Worker dry-run 與本地 build 通過。
-- [ ] 外部 `verify-public-build` 未驗證：目前公開站仍回傳不同 build，且本次未部署；不列為完成。
+- [x] 本地全套 tests 202（201 pass、1 skip、0 fail）、`pnpm run build`、Worker dry-run 與本地 typecheck 通過；完整 e2e 103/103 通過。
+- [ ] 外部 `verify-public-build` 未驗證：29 次檢查都回報公開 HTML 仍是不同 build，且本次未部署；不列為完成。
 
 ## ⑦ PM 四關走查
 
-- [ ] 尚未動工；必須用 ego-browser 以三種測試身分走查桌面與手機寬度。
+- [x] PM 已用 ego-browser 走查 Fish、家人、分會管理員的桌面／390px 手機畫面，逐一操作可見導覽、收件匣、來源篩選、搜尋、四象限與核准待辦；設定頁、分類偏好儲存／清除、權限邊界提示、家人遮罩、分會管理員邊界與無設定入口均通過。紀錄：`docs/sr-drafts/line-personal-ai-inbox-ui-walkthrough.md`。
+- [ ] 公開站仍未驗證；`pnpm run verify:public` 實跑 29 次皆回報公開 HTML 是不同 build。本輪未部署，Fish 親自驗收尚未開始。
 
 ## ⑧ Fish 驗收
 
-- [ ] 尚未開始；只能在 PM 完成四關自驗且沒有背景測試佔用環境後進行。
+- [ ] 尚未開始；Fish 尚未進行白話驗收。
 
 ## ⑨ PR 與 retro
 

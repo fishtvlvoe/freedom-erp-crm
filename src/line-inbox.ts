@@ -1,6 +1,6 @@
 import {Problem, ok} from './problem.js';
 
-export type LineRole = 'fish' | 'family';
+export type LineRole = 'fish' | 'family' | 'branch_admin';
 export type ConversationType = 'private' | 'group' | 'openchat';
 export type Quadrant = 'important_urgent' | 'urgent_not_important' | 'not_important_not_urgent' | 'important_not_urgent';
 export type SyncState = 'online' | 'offline' | 'backfilling' | 'paused' | 'error';
@@ -136,16 +136,36 @@ export interface LineState {
   taskCandidates: TaskCandidate[];
   tasks: LineTask[];
   drafts: LineDraft[];
-  classificationPreferences: Array<{id: string; scope: 'fish'; pattern: string; quadrant: Quadrant; updatedAt: string}>;
+  classificationPreferences: ClassificationPreference[];
   audits: LineAudit[];
   operations: Record<string, {hash: string; response: unknown; createdAt: string}>;
   sync: {state: SyncState; lastSuccessfulAt: string | null; lastError: string | null; backfillCompleted: number; backfillRemaining: number; backfillBatchSize: number};
   backup: {adapter: 'simulated'; state: 'simulated' | 'disabled' | 'error'; queue: Array<{id: string; createdAt: string; attempts: number}>; versions: Array<{id: string; createdAt: string; bytes: number; scope: string}>; lastSuccessfulAt: string | null};
   backupBlobs: Record<string, SimulatedBackup>;
+  restoreRecords: LineRestoreRecord[];
   notifications: Array<{id: string; recipientRole: 'fish'; summary: string; href: string; createdAt: string}>;
   emailOutbox: Array<{id: string; accountId: string; token: string; createdAt: number; expiresAt: number; usedAt: number | null}>;
   rateLimits: Record<string, {windowStart: number; count: number}>;
   seeded: boolean;
+}
+
+export interface ClassificationPreference {
+  id: string;
+  scope: 'fish';
+  pattern: ConversationType;
+  quadrant: Quadrant;
+  updatedAt: string;
+}
+
+export interface LineRestoreRecord {
+  id: string;
+  backupId: string;
+  version: number;
+  target: 'isolated-line-restore';
+  integrityVerified: boolean;
+  permissionVersion: number;
+  auditCount: number;
+  createdAt: string;
 }
 
 export interface ProjectedLineState {
@@ -226,6 +246,7 @@ export function createLineState(now = Date.now()): LineState {
     sync: {state: 'online', lastSuccessfulAt: iso(now), lastError: null, backfillCompleted: 0, backfillRemaining: 0, backfillBatchSize: 2},
     backup: {adapter: 'simulated', state: 'simulated', queue: [], versions: [], lastSuccessfulAt: null},
     backupBlobs: {},
+    restoreRecords: [],
     notifications: [],
     emailOutbox: [],
     rateLimits: {},
@@ -245,6 +266,17 @@ function safeText(value: string | undefined, fallback: string, max = 240): strin
   return (typeof value === 'string' && value.trim() ? value.trim() : fallback).slice(0, max);
 }
 
+function safeAttachment(value: LineMessageInput['attachment']): InboxItem['attachment'] {
+  if (!value) return undefined;
+  const attachment: NonNullable<InboxItem['attachment']> = {
+    name: safeText(value.name, '未命名附件', 120),
+    type: safeText(value.type, 'application/octet-stream', 80),
+    available: value.available === true,
+  };
+  if (typeof value.link === 'string' && value.link.trim()) attachment.link = value.link.trim().slice(0, 500);
+  return attachment;
+}
+
 export function ingestLineMessage(state: LineState, input: LineMessageInput): {created: boolean; item: InboxItem} {
   ok(['private', 'group', 'openchat'].includes(input.conversationType), 422, 'source_invalid', '來源類型不符');
   ok(input.accountScope.length > 0 && input.conversationId.length > 0, 422, 'source_invalid', '來源範圍不符');
@@ -256,7 +288,8 @@ export function ingestLineMessage(state: LineState, input: LineMessageInput): {c
   if (existing) return {created: false, item: existing};
   const sourceMessageId = input.sourceMessageId || `fingerprint-${deduplicationKey}`;
   const confidence = Math.min(1, Math.max(0, input.confidence ?? (input.conversationType === 'openchat' ? 0.95 : 0.88)));
-  const suggestedQuadrant = input.suggestedQuadrant ?? quadrantFor(input);
+  const preference = state.classificationPreferences.find(value => value.scope === 'fish' && value.pattern === input.conversationType);
+  const suggestedQuadrant = input.suggestedQuadrant ?? preference?.quadrant ?? quadrantFor(input);
   const reviewQueue = confidence < REVIEW_THRESHOLD;
   const id = `msg-${state.inbox.length + 1}-${deduplicationKey.slice(0, 8)}`;
   const item: InboxItem = {
@@ -275,13 +308,13 @@ export function ingestLineMessage(state: LineState, input: LineMessageInput): {c
     confidence,
     reviewReason: reviewQueue ? safeText(input.reviewReason, 'AI 信心低於確認門檻。', 200) : null,
     reviewQueue,
-    attachment: input.attachment ? {...input.attachment, name: input.attachment.name.slice(0, 120), type: input.attachment.type.slice(0, 80)} : undefined,
+    attachment: safeAttachment(input.attachment),
     syncState: state.sync.state,
     importantHold: input.importantHold === true,
     version: 1,
   };
   state.inbox.push(item);
-  state.rawMessages[sourceMessageId] = {sourceMessageId, rawText: input.rawText, receivedAt: input.receivedAt, importantHold: item.importantHold, attachmentIndexes: input.attachment ? [input.attachment.name] : []};
+  state.rawMessages[sourceMessageId] = {sourceMessageId, rawText: input.rawText, receivedAt: input.receivedAt, importantHold: item.importantHold, attachmentIndexes: item.attachment ? [item.attachment.name] : []};
   if (input.taskCandidate) state.taskCandidates.push({id: `candidate-${state.taskCandidates.length + 1}`, messageId: id, title: safeText(input.taskCandidate.title, '待確認事項'), assignee: safeText(input.taskCandidate.assignee, 'Fish', 80), dueAt: input.taskCandidate.dueAt ?? null, sourceSummary: item.maskedSummary, status: 'pending', version: 1});
   if (input.draft) state.drafts.push({id: `draft-${state.drafts.length + 1}`, messageId: id, conversationType: input.conversationType, recipient: safeText(input.draft.recipient, item.sender, 100), channel: safeText(input.draft.channel, 'LINE', 80), body: safeText(input.draft.body, '待 Fish 確認的回覆草稿。', 2000), attachment: item.attachment, status: 'pending', version: 1});
   return {created: true, item};
