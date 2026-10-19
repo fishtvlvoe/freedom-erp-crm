@@ -18,15 +18,17 @@ change: line-personal-ai-inbox
 - [x] `spectra validate line-personal-ai-inbox`：valid；`spectra analyze line-personal-ai-inbox --json` 的 Coverage／Consistency／Gaps 為 Clean，另有 27 個 Ambiguity 建議，未宣稱 0 warnings。
 - [x] 完成本地 fake 第一里程碑的可執行部分：LINE focused unit/API 18/18、Playwright 9/9、全套 Playwright 103/103、全套 202 tests（201 pass、1 skip、0 fail）、typecheck、build 與 Worker dry-run 通過；包含 simulated backup retry、isolated restore、Fish-only notification、三種測試身份與 UI reset。
 - [x] 完成 PM ego-browser 三身分桌面／390px 手機走查；紀錄：`docs/sr-drafts/line-personal-ai-inbox-ui-walkthrough.md`。手機實測 `innerWidth=390`、`scrollWidth=375`，無橫向溢出。
+- [x] Fish 已依白話驗收清單完成本地 simulated 第一里程碑驗收；真實 provider 與公開站不在本輪範圍。
 - [x] 完成收尾檢查：Spectra validate、`git diff --check` 與秘密模式掃描；另外修正既有 launch-kit 測試的 `python3` 相容性，未弱化 ZIP／權限驗證。
 
 ## 下一步指標
 
-- [等老魚] Fish 依白話清單進行桌面／手機驗收；PM 三身分走查已完成，公開站仍未部署／驗證。
+- [PM] 更新 flow-status／tasks 的 Fish 驗收狀態，建立 feature branch PR。
+- [PM] 執行 retro，產出白話版 HTML；未經 Fish 確認不回寫全域規則。
 - [等老魚] 若要進入真實 LINE、AI、Drive、Email provider 或正式 deploy，另開 change 並先確認範圍。
 
 ## 明確未動工
 
 - 外部公開站驗證：本次未部署，`verify-public-build` 只得到公開站仍是不同 build。
 - 尚未登入真實 LINE、授權 Google Drive、接入 AI Provider 或 Email delivery provider。
-- 尚未完成 Fish 驗收、PR／retro 與 Spectra archive；公開站驗證仍因未部署而失敗。
+- 尚未完成 PR／retro 與 Spectra archive；公開站驗證仍因未部署而失敗。

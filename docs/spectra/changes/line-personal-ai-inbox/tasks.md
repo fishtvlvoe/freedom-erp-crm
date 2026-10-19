@@ -54,5 +54,5 @@ English so the Spectra analyzer can cross-reference the specs and design.
 
 - [ ] 7.1 重跑既有 ERP/CRM 單元、API、public build 與 e2e 回歸測試，確認匿名 `freedom_session` 與既有模擬資料行為不變；`pnpm test` 為 202（201 pass、1 skip、0 fail）、`pnpm run test:e2e` 為 103/103、build/typecheck/dry-run 通過，但 `pnpm run verify:public` 29 次仍回報公開 HTML 是不同 build，因此本 task 保留未完成。
 - [x] 7.2 PM 以 ego-browser 走查 Fish、一般會員、分會管理員三種身分的桌面與手機畫面，逐一操作可見按鈕並確認沒有 401／500、破版、假按鈕或裸露 raw content；手機固定 390px 並實測無橫向溢出。紀錄與截圖路徑：`docs/sr-drafts/line-personal-ai-inbox-ui-walkthrough.md`。
-- [ ] 7.3 依 design.md 的 `observable behavior`、`interface and data shape`、`failure modes`、`acceptance criteria` 與 `Fish 驗收清單` 完成四關：本功能 e2e 全綠、舊功能測試全綠、PM ego-browser 桌面＋手機三身分走查、Fish 按白話清單驗收；執行 `spectra analyze line-personal-ai-inbox --json` 與 `spectra validate line-personal-ai-inbox` 並保存輸出。
-- [ ] 7.4 Fish 驗收清單與 `Scope boundaries`：登入／登出、首頁收件匣與四象限、待確認分類、待辦核准與家人協作、逐筆草稿確認、OpenChat disabled、離線恢復、Email reset、遮罩與通知、附件 metadata、備份模擬狀態；每項附實跑證據，未做的真實 LINE／AI／Google Drive／Email provider 明確標記未動工。
+- [x] 7.3 依 design.md 的 `observable behavior`、`interface and data shape`、`failure modes`、`acceptance criteria` 與 `Fish 驗收清單` 完成四關：本功能 e2e 全綠、舊功能測試全綠、PM ego-browser 桌面＋手機三身分走查、Fish 已按白話清單完成驗收；`spectra analyze line-personal-ai-inbox --json` 與 `spectra validate line-personal-ai-inbox` 已執行並保存輸出。公開站驗證另由 7.1 保留未完成。
+- [x] 7.4 Fish 驗收清單與 `Scope boundaries`：登入／登出、首頁收件匣與四象限、待確認分類、待辦核准與家人協作、逐筆草稿確認、OpenChat disabled、離線恢復、Email reset、遮罩與通知、附件 metadata、備份模擬狀態均完成本地驗收；真實 LINE／AI／Google Drive／Email provider 明確標記未動工。

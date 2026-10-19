@@ -38,15 +38,15 @@ updated: 2026-10-20
 ## ⑦ PM 四關走查
 
 - [x] PM 已用 ego-browser 走查 Fish、家人、分會管理員的桌面／390px 手機畫面，逐一操作可見導覽、收件匣、來源篩選、搜尋、四象限與核准待辦；設定頁、分類偏好儲存／清除、權限邊界提示、家人遮罩、分會管理員邊界與無設定入口均通過。紀錄：`docs/sr-drafts/line-personal-ai-inbox-ui-walkthrough.md`。
-- [ ] 公開站仍未驗證；`pnpm run verify:public` 實跑 29 次皆回報公開 HTML 是不同 build。本輪未部署，Fish 親自驗收尚未開始。
+- [ ] 公開站仍未驗證；`pnpm run verify:public` 實跑 29 次皆回報公開 HTML 是不同 build。本輪未部署；Fish 本地驗收已完成，但不替代公開站驗證。
 
 ## ⑧ Fish 驗收
 
-- [ ] 尚未開始；Fish 尚未進行白話驗收。
+- [x] Fish 已依白話清單完成驗收並確認可以；範圍為本地 simulated 第一里程碑，真實 LINE／AI／Google Drive／Email provider 仍未納入。
 
 ## ⑨ PR 與 retro
 
-- [ ] 尚未動工；需先完成 Fish 驗收，再走 PR 與白話版 retro HTML。
+- [ ] Fish 驗收已完成；PR 與白話版 retro HTML 尚未動工。
 
 ## ⑩ Archive
 
